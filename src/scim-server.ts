@@ -79,9 +79,9 @@ export class SCIMServer {
     // Get User (GET /Users/:id)
     this.app.get('/Users/:id', async (req: Request, res: Response) => {
       try {
-        const username = req.params.id;
+        const username = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
         const githubUser = await this.githubClient.getUser(username);
-        
+
         if (!githubUser) {
           return res.status(404).json({
             schemas: ['urn:ietf:params:scim:api:messages:2.0:Error'],
@@ -105,7 +105,7 @@ export class SCIMServer {
     // Delete User (DELETE /Users/:id)
     this.app.delete('/Users/:id', async (req: Request, res: Response) => {
       try {
-        const username = req.params.id;
+        const username = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;        
         await this.githubClient.removeUser(username);
         
         res.status(204).send();

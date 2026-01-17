@@ -24,7 +24,7 @@ export class UserMapper {
     return {
       email: primaryEmail,
       username: scimUser.userName,
-      role: 'member' as const,
+      role: 'direct_member' as const,
     };
   }
 

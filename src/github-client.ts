@@ -9,21 +9,21 @@ export class GitHubClient {
     this.org = org;
   }
 
-  async inviteUser(email: string, role: 'member' | 'admin' = 'member') {
-    try {
-      const response = await this.octokit.orgs.createInvitation({
-        org: this.org,
-        email: email,
-        role: role,
-      });
-      
-      console.log(`✓ Invited ${email} to ${this.org}`);
-      return response.data;
-    } catch (error: any) {
-      console.error(`✗ Failed to invite ${email}:`, error.message);
-      throw error;
-    }
+async inviteUser(email: string, role: 'direct_member' | 'admin' | 'billing_manager' = 'direct_member') {
+  try {
+    const response = await this.octokit.orgs.createInvitation({
+      org: this.org,
+      email: email,
+      role: role,
+    });
+    
+    console.log(`✓ Invited ${email} to ${this.org}`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`✗ Failed to invite ${email}:`, error.message);
+    throw error;
   }
+}
 
   async removeUser(username: string) {
     try {
