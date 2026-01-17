@@ -27,6 +27,30 @@ The connector translates SCIM format into GitHub API calls, handling the authent
 
 I used TypeScript because that's what is required for custom SailPoint connectors in ISC. The patterns are similar - REST API integration, data mapping, lifecycle operations.
 
+### Audit Logging
+
+All provisioning operations are logged to `logs/audit-YYYY-MM-DD.json` for compliance and troubleshooting:
+```json
+{
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "operation": "CREATE",
+  "resource": "User",
+  "resourceId": "jdoe",
+  "status": "success",
+  "details": {
+    "email": "john.doe@example.com",
+    "invitationId": 12345
+  }
+}
+```
+
+This audit trail supports:
+- SOX compliance requirements
+- Security incident investigation
+- Access certification evidence
+- Troubleshooting provisioning failures
+
+
 ## Running It
 ```bash
 npm install

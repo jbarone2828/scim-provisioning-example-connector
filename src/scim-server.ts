@@ -1,14 +1,17 @@
 import express, { Request, Response } from 'express';
 import { GitHubClient } from './github-client';
 import { UserMapper, SCIMUser } from './user-mapper';
+import { AuditLogger } from './audit-logger';
 
 export class SCIMServer {
   private app: express.Application;
   private githubClient: GitHubClient;
+  private auditLogger: AuditLogger;
 
   constructor(githubClient: GitHubClient) {
     this.app = express();
     this.githubClient = githubClient;
+    this.auditLogger = new AuditLogger();
     this.setupMiddleware();
     this.setupRoutes();
   }
@@ -52,7 +55,11 @@ export class SCIMServer {
         const githubUser = UserMapper.scimToGitHub(scimUser);
         
         const result = await this.githubClient.inviteUser(githubUser.email, githubUser.role);
-        
+        // Audit log
+        this.auditLogger.logSuccess('CREATE', 'User', scimUser.userName, {
+            email: githubUser.email,
+            invitationId: result.id,
+        });
         // Return SCIM-formatted response
         res.status(201).json({
           schemas: ['urn:ietf:params:scim:schemas:core:2.0:User'],
@@ -67,6 +74,9 @@ export class SCIMServer {
           },
         });
       } catch (error: any) {
+        const scimUser: SCIMUser = req.body;
+        this.auditLogger.logFailure('CREATE', 'User', error.message, scimUser.userName);
+
         console.error('Error creating user:', error);
         res.status(500).json({
           schemas: ['urn:ietf:params:scim:api:messages:2.0:Error'],
@@ -107,9 +117,12 @@ export class SCIMServer {
       try {
         const username = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;        
         await this.githubClient.removeUser(username);
-        
+        this.auditLogger.logSuccess('DELETE', 'User', username);
         res.status(204).send();
       } catch (error: any) {
+        const username = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+        this.auditLogger.logFailure('DELETE', 'User', error.message, username);
+
         console.error('Error deleting user:', error);
         res.status(500).json({
           schemas: ['urn:ietf:params:scim:api:messages:2.0:Error'],
