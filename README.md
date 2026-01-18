@@ -1,6 +1,6 @@
 # SCIM GitHub Provisioning Connector
 
-A SCIM 2.0 server that automates user provisioning to GitHub organizations. Similar to the custom connectors I built at CarMax using SailPoint ISC, but implemented from scratch to show I understand the underlying protocols.
+A SCIM 2.0 server that automates user provisioning to GitHub organizations. Similar to the custom connectors I've built to interface with SailPoint ISC, but implemented from scratch to show I understand the underlying protocols.
 
 ## Why I Built This
 
@@ -68,7 +68,7 @@ curl -X POST http://localhost:3000/Users \
 
 ## Real-World Context
 
-This is a simplified version of what I did at CarMax - we had dozens of custom connectors interfacing with vendor APIs. The difference is I can't share that code (proprietary), so I rebuilt the pattern here to demonstrate:
+This is a simplified version of what I've done in my career - with had dozens of custom connectors interfacing with vendor APIs. The difference is I can't share that code (proprietary), so I rebuilt the pattern here to demonstrate:
 
 - SCIM protocol knowledge
 - REST API integration  
